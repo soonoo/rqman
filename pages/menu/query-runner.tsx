@@ -73,7 +73,7 @@ const QueryExecutorPage = () => {
 
             <Stack justifyContent="center" paddingX="2px" width="100%">
               <Alert severity="info" sx={{ margin: "6px" }}>
-                Multiple queries must be separated by semicolon(";").
+                Multiple queries must be separated by semicolon.
               </Alert>
               <ButtonGroup sx={{ marginBottom: "4px", marginX: "6px" }}>
                 <Button
