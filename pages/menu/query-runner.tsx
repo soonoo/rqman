@@ -10,6 +10,7 @@ import QueryResponseGrid from "@/components/query-runner/QueryResponsesGrid";
 import { Resizable } from "re-resizable";
 import { PlayCircle } from "@mui/icons-material";
 import DBTreeView from "@/components/query-runner/DBTreeView";
+import { useConfig } from "hooks/useConfig";
 
 const QueryExecutorPage = () => {
   const [results, setResults] = useState<({ q: string } & QueryResults)[]>([]);
@@ -39,8 +40,12 @@ const QueryExecutorPage = () => {
 
     let responses: ({ q: string } & QueryResults)[] = [];
     for (const q of queries) {
-      const res = await submitQuery(q);
-      responses = [{ q, ...res.data }, ...responses];
+      try {
+        const res = await submitQuery(q);
+        responses = [{ q, ...res.data }, ...responses];
+      } catch(e: any) {
+        responses = [{ q, results: [{ error: e.message || "unknown error occurs" }], time: 0 }, ...responses];
+      }
     }
     setResults([...responses, ...results]);
   };

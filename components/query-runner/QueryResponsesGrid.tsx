@@ -4,7 +4,7 @@ import {
   isWriteResult,
   QueryResults,
 } from "@/types/rqlite";
-import { Clear, Close } from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
 import { Tabs, Tab, Stack, Box, Divider, IconButton } from "@mui/material";
 import { isEmpty } from "lodash";
 import { useCallback } from "react";
@@ -41,7 +41,7 @@ const QueryResponseGrid = (prop: IQueryResponseGridProp) => {
           <DataGrid
             style={{ height: "calc(100% - 80px)", flexGrow: 1 }}
             columns={results[0].columns.map((c) => ({ key: c, name: c }))}
-            rows={results[0].values.map((v) => {
+            rows={(results[0].values || []).map((v) => {
               return v.reduce((acc, cur, i) => {
                 // @ts-ignore
                 acc[results[0].columns[i]] = String(cur);

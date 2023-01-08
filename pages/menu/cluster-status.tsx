@@ -55,7 +55,12 @@ const ClusterStatusPage = () => {
           }
 
           const doc = new YAMLDocument();
-          doc.contents = responses[index].data?.data;
+          if(responses[index].isError) {
+            doc.contents = (responses[index].error as any)?.message || "Unknown error occurred while fetching data."
+          } else {
+            doc.contents = responses[index].data?.data;
+          }
+          
           return (
             <Stack direction="column" flex="1 1 0" width={0} key={key}>
               <Typography
@@ -71,7 +76,7 @@ const ClusterStatusPage = () => {
                 {/* (API: /status, CLI: .status) */}
               </Typography>
               <ReactCodeMirror
-              height="100%"
+                height="100%"
                 style={{ width: "100%", height: "100%", overflow: "scroll" }}
                 value={doc.toString()}
                 readOnly

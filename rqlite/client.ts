@@ -1,15 +1,26 @@
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import {
-  ErrorResult,
   isErrorResult,
   QueryResults,
   ReadResult,
   WriteResult,
 } from "@/types/rqlite";
+import { getConfig } from "hooks/useConfig";
 
 const httpClient = axios.create({
-  // baseURL: "http://localhost:4001",
   baseURL: "/api/rqlite",
+});
+
+httpClient.interceptors.request.use(function (config) {
+  const activeAccount = getConfig().accounts.find((u) => u.isActive);
+
+  if (activeAccount) {
+    const { username, password } = activeAccount;
+    config.headers = config.headers ?? {};
+    const authHeader = btoa(`${username}:${password}`);
+    (config.headers as any)["X-Rqlite-Authorization"] = `Basic ${authHeader}`;
+  }
+  return config;
 });
 
 export const rqlite = {

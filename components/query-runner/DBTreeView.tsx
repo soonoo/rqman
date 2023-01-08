@@ -1,7 +1,7 @@
 import { rqlite } from "@/rqlite/client";
 import { ChevronRight, ExpandMore } from "@mui/icons-material";
 import { TreeItem, TreeView } from "@mui/lab";
-import { flatten } from "lodash";
+import { flatten, get, isEmpty } from "lodash";
 import { useQueries, useQuery } from "@tanstack/react-query";
 
 interface IDBTreeViewProp {
@@ -10,7 +10,7 @@ interface IDBTreeViewProp {
 
 const DBTreeView = (prop: IDBTreeViewProp) => {
   const query = "SELECT name FROM sqlite_master WHERE type='table'";
-  const { data: tableResponse, isSuccess: isTableREsponseSuccess } = useQuery(
+  const { data: tableResponse, isError, error } = useQuery(
     [query],
     () => rqlite.read([query]),
   );
@@ -22,6 +22,7 @@ const DBTreeView = (prop: IDBTreeViewProp) => {
       return {
         queryKey: [q],
         queryFn: () => rqlite.read([q]),
+        enabled: false,
       };
     }),
    });
@@ -30,26 +31,55 @@ const DBTreeView = (prop: IDBTreeViewProp) => {
     <div
       style={{ backgroundColor: "#eee", height: "100%", overflow: "scroll" }}
     >
+      {isEmpty(tables) && (
+        <div
+          style={{
+            padding: "10px",
+            alignItems: "center",
+            justifyContent: "center",
+            display: "flex",
+          }}
+        >
+          {isError
+            ? get(error, "message", "Unknown error occurred while fetching data")
+            : "No tables found"}
+        </div>
+      )}
       <TreeView
         defaultCollapseIcon={<ExpandMore />}
         defaultExpandIcon={<ChevronRight />}
       >
         {tables.map((table, index) => (
-          <TreeItem nodeId={table} label={<span style={{ fontWeight: 600, fontSize: "15px" }}>{table}</span>} key={table}>
-            <TreeItem nodeId={table + "/data"} label="data" onClick={() => prop.onLoadTableData(table)} />
+          <TreeItem
+            nodeId={table}
+            label={
+              <span style={{ fontWeight: 600, fontSize: "15px" }}>{table}</span>
+            }
+            key={table}
+            onClick={() => tableInfo[index].refetch()}
+          >
+            <TreeItem
+              nodeId={table + "/data"}
+              label="data"
+              onClick={() => prop.onLoadTableData(table)}
+            />
             <TreeItem nodeId={table + "/columns"} label="columns">
-              {tableInfo[index].data?.data.results[0].values.map((column, index) => (
-                <TreeItem
-                  nodeId={table + "/columns/" + index}
-                  label={
-                    <span style={{ fontSize: "14px" }}>
-                      {column[1]}{" "}
-                      <span style={{ color: "#777", fontSize: "12px" }}>{column[2]}</span>
-                    </span>
-                  }
-                  key={index}
-                />
-              ))}
+              {(tableInfo[index].data?.data.results[0].values || []).map(
+                (column, index) => (
+                  <TreeItem
+                    nodeId={table + "/columns/" + index}
+                    label={
+                      <span style={{ fontSize: "14px" }}>
+                        {column[1]}{" "}
+                        <span style={{ color: "#777", fontSize: "12px" }}>
+                          {column[2]}
+                        </span>
+                      </span>
+                    }
+                    key={index}
+                  />
+                )
+              )}
             </TreeItem>
           </TreeItem>
         ))}

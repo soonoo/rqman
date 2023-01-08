@@ -1,7 +1,7 @@
 export interface ReadResult {
   columns: string[];
   types: string[];
-  values: any[][];
+  values?: any[][];
   time: number;
   error: string;
 }
