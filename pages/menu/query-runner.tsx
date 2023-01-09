@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, Button, ButtonGroup } from "@mui/material";
 import { Stack } from "@mui/system";
 import SqlEditor from "@/components/query-runner/SqlEditor";
@@ -11,10 +11,13 @@ import { Resizable } from "re-resizable";
 import { PlayCircle } from "@mui/icons-material";
 import DBTreeView from "@/components/query-runner/DBTreeView";
 import { useConfig } from "hooks/useConfig";
+import { LoadingButton } from "@mui/lab";
 
 const QueryExecutorPage = () => {
-  const [results, setResults] = useState<({ q: string } & QueryResults)[]>([]);
   const [editorContent, setEditorContent] = useState("");
+  const { saveEditorContent, config, saveQueryResponses } = useConfig();
+  const [results, setResults] = useState<({ q: string } & QueryResults)[]>([]);
+  const [isQueryRunning, setIsQueryRunning] = useState(false);
 
   const removeResultByIndex = (index: number) => {
     const newResults = [...results];
@@ -33,6 +36,11 @@ const QueryExecutorPage = () => {
   };
 
   const onSubmit = async (content: string) => {
+    if (isQueryRunning) {
+      return;
+    }
+
+    setIsQueryRunning(true);
     const queries = content
       .split(";")
       .map((q) => trim(q, "\n").toLowerCase())
@@ -48,6 +56,7 @@ const QueryExecutorPage = () => {
       }
     }
     setResults([...responses, ...results]);
+    setIsQueryRunning(false);
   };
 
   return (
@@ -56,7 +65,7 @@ const QueryExecutorPage = () => {
         style={{
           flexGrow: 1,
           overflow: "hidden",
-          height: "calc(100vh - 100px)",
+          // height: "calc(100vh - 60px)",
           display: "flex",
           flexDirection: "column",
         }}
@@ -73,7 +82,11 @@ const QueryExecutorPage = () => {
               minWidth="20px"
               defaultSize={{ width: "200px", height: "100%" }}
             >
-              <DBTreeView onLoadTableData={(tableName: string) => onSubmit(`SELECT * FROM ${tableName} LIMIT 500`)} />
+              <DBTreeView
+                onLoadTableData={(tableName: string) =>
+                  onSubmit(`SELECT * FROM ${tableName} LIMIT 500`)
+                }
+              />
             </Resizable>
 
             <Stack justifyContent="center" paddingX="2px" width="100%">
@@ -81,15 +94,21 @@ const QueryExecutorPage = () => {
                 Multiple queries must be separated by semicolon.
               </Alert>
               <ButtonGroup sx={{ marginBottom: "4px", marginX: "6px" }}>
-                <Button
+                <LoadingButton
+                  disableRipple
                   startIcon={<PlayCircle />}
                   variant="contained"
                   onClick={() => onSubmit(editorContent)}
+                  loading={isQueryRunning}
                 >
                   RUN (Shift + Enter)
-                </Button>
+                </LoadingButton>
               </ButtonGroup>
-              <SqlEditor onSubmit={() => onSubmit(editorContent)} onChange={setEditorContent} />
+              <SqlEditor
+                onSubmit={() => onSubmit(editorContent)}
+                onChange={setEditorContent}
+                onBlur={() => saveEditorContent(editorContent)}
+              />
             </Stack>
           </Stack>
         </Resizable>

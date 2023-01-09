@@ -1,11 +1,13 @@
 import {
   isErrorResult,
   isReadResult,
+  isTimeOnlyResult,
   isWriteResult,
   QueryResults,
 } from "@/types/rqlite";
 import { Close } from "@mui/icons-material";
 import { Tabs, Tab, Stack, Box, Divider, IconButton } from "@mui/material";
+import { useConfig } from "hooks/useConfig";
 import { isEmpty } from "lodash";
 import { useCallback } from "react";
 import { useEffect } from "react";
@@ -30,17 +32,33 @@ const QueryResponseGrid = (prop: IQueryResponseGridProp) => {
       return null;
     }
 
-    const { results, q } = data[tabIndex];
+    const { results, q, time } = data[tabIndex];
 
     if (isReadResult(results[0])) {
       return (
         <>
-          <div style={{ padding: "2px" }}>
-            {(results[0].time * 1000).toFixed(2)}ms, [{q}]
+          <div style={{ padding: "4px" }}>
+            {(results[0].time * 1000).toFixed(2)}ms
+            <pre
+              style={{
+                display: "inline",
+                backgroundColor: "#ddd",
+                padding: "4px",
+                borderRadius: "4px",
+                marginLeft: "10px",
+              }}
+            >
+              {q}
+            </pre>
           </div>
           <DataGrid
             style={{ height: "calc(100% - 80px)", flexGrow: 1 }}
             columns={results[0].columns.map((c) => ({ key: c, name: c }))}
+            renderers={{
+              noRowsFallback: (
+                <div style={{ padding: "10px" }}>No data found.</div>
+              ),
+            }}
             rows={(results[0].values || []).map((v) => {
               return v.reduce((acc, cur, i) => {
                 // @ts-ignore
@@ -53,10 +71,70 @@ const QueryResponseGrid = (prop: IQueryResponseGridProp) => {
       );
     }
     if (isWriteResult(results[0])) {
-      return <div>{JSON.stringify(results[0])}</div>;
+      return (
+        <div style={{ padding: "4px" }}>
+          <div>
+            {(time * 1000).toFixed(2)}ms
+            <pre
+              style={{
+                display: "inline",
+                backgroundColor: "#ddd",
+                padding: "4px",
+                borderRadius: "4px",
+                marginLeft: "10px",
+              }}
+            >
+              {q}
+            </pre>
+          </div>
+          <Divider sx={{ marginY: "4px" }} />
+          {JSON.stringify(results[0])}
+        </div>
+      );
+    }
+    if (isTimeOnlyResult(results[0])) {
+      return (
+        <div style={{ padding: "4px" }}>
+          <div>
+            {(time * 1000).toFixed(2)}ms
+            <pre
+              style={{
+                display: "inline",
+                backgroundColor: "#ddd",
+                padding: "4px",
+                borderRadius: "4px",
+                marginLeft: "10px",
+              }}
+            >
+              {q}
+            </pre>
+          </div>
+          <Divider sx={{ marginY: "4px" }} />
+          {JSON.stringify(results[0])}
+        </div>
+      );
     }
     if (isErrorResult(results[0])) {
-      return <div>{JSON.stringify(results[0])}</div>;
+      return (
+        <div style={{ padding: "4px" }}>
+          <div>
+            {(time * 1000).toFixed(2)}ms
+            <pre
+              style={{
+                display: "inline",
+                backgroundColor: "#ddd",
+                padding: "4px",
+                borderRadius: "4px",
+                marginLeft: "10px",
+              }}
+            >
+              {q}
+            </pre>
+          </div>
+          <Divider sx={{ marginY: "4px" }} />
+          {JSON.stringify(results[0])}
+        </div>
+      );
     }
     return null;
   }, [data, tabIndex]);

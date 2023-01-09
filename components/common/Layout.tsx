@@ -13,7 +13,6 @@ import {
   Divider,
   ListItemIcon,
   ListItemText,
-  Popover,
 } from "@mui/material";
 import { FC, PropsWithChildren, useState } from "react";
 import { useRouter } from "next/router";
@@ -35,7 +34,6 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  console.log(config)
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -43,22 +41,40 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
       <AppBar
         position="fixed"
         sx={{
-          marginLeft: open ? "240px" : "",
+          backgroundColor: "#eee",
           width: "100%",
-          // width: open ? `calc(100% - 240px)` : "100%",
           transition: "all .25s",
         }}
       >
-        <Toolbar>
+        <Toolbar variant="dense">
           <Stack
             direction="row"
             justifyContent="space-between"
             alignItems="center"
             width="100%"
           >
-            <Typography variant="h6" noWrap component="div">
-              rqman
-            </Typography>
+            <Stack direction="row" alignItems="center">
+              <Typography
+                variant="h6"
+                noWrap
+                component="div"
+                color="black"
+                fontWeight="300"
+                marginRight="60px"
+              >
+                rqman
+              </Typography>
+              <Tabs
+                value={router.pathname}
+                onChange={(e, value) => router.push(value)}
+              >
+                <Tab value={"/menu/query-runner"} label="Query runner"></Tab>
+                <Tab
+                  value={"/menu/cluster-status"}
+                  label="Cluster status"
+                ></Tab>
+              </Tabs>
+            </Stack>
             <Stack>
               <Stack direction="row" alignItems="center" gap={1}>
                 {/* <Popover
@@ -167,19 +183,12 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         style={{
           width: "100%",
           transition: "all .25s",
-          paddingTop: "64px",
+          paddingTop: "48px",
           height: "100vh",
           display: "flex",
           flexDirection: "column",
         }}
       >
-        <Tabs
-          value={router.pathname}
-          onChange={(e, value) => router.push(value)}
-        >
-          <Tab value={"/menu/query-runner"} label="Query runner"></Tab>
-          <Tab value={"/menu/cluster-status"} label="Cluster status"></Tab>
-        </Tabs>
         {children}
       </main>
     </Box>

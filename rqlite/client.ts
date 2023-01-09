@@ -25,25 +25,9 @@ httpClient.interceptors.request.use(function (config) {
 
 export const rqlite = {
   read: (q: string[]) =>
-    httpClient
-      .post<QueryResults<ReadResult>>("/db/query?timings", q)
-      .then((resp) => {
-        if (isErrorResult(resp.data.results[0])) {
-          throw resp;
-        }
-        return resp;
-      }),
-
+    httpClient.post<QueryResults<ReadResult>>("/db/query?timings", q),
   write: (q: string[]) =>
-    httpClient
-      .post<QueryResults<WriteResult>>("/db/execute?timings", q)
-      .then((resp) => {
-        if (isErrorResult(resp.data.results[0])) {
-          throw resp;
-        }
-        return resp;
-      }),
-
+    httpClient.post<QueryResults<WriteResult>>("/db/execute?timings", q),
   status: () => httpClient.get<any>("/status"),
   nodes: () => httpClient.get<any>("/nodes"),
   readiness: () => httpClient.get<any>("/readyz"),

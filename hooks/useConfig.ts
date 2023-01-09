@@ -1,3 +1,4 @@
+import { QueryResults } from "@/types/rqlite";
 import { cloneDeep } from "lodash";
 import { useEffect, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
@@ -8,6 +9,8 @@ interface IConfig {
     password: string;
     isActive?: boolean;
   }[],
+  editorContent: string;
+  queryResponses: ({ q: string } & QueryResults)[],
 }
 
 const CONFIG_KEY = "@@RQMAN_CONFIG";
@@ -25,13 +28,13 @@ export const getConfig = () => {
 
 const defaultConfig: IConfig = {
   accounts: [],
+  editorContent: "",
+  queryResponses: [],
 };
 
 export const useConfig = () => {
   const [config, setConfig] = useState<IConfig>(defaultConfig);
-  const [_config, _setConfig] = useLocalStorage<IConfig>(CONFIG_KEY, {
-    accounts: [],
-  });
+  const [_config, _setConfig] = useLocalStorage<IConfig>(CONFIG_KEY, defaultConfig);
 
   // Prevent SSR mismatch:
   // useLocalStorage returns default value on server side.
@@ -66,10 +69,25 @@ export const useConfig = () => {
     _setConfig(c);
   }
 
+  const saveEditorContent = (content: string) => {
+    const c = cloneDeep(_config);
+    c.editorContent = content;
+    _setConfig(c);
+  }
+
+  const saveQueryResponses = (data: ({ q: string } & QueryResults)[]) => {
+    const c = cloneDeep(_config);
+    console.log(data)
+    c.queryResponses = data;
+    _setConfig(c);
+  }
+
   return {
     config,
     addAccount,
     activateAccount,
     removeAccount,
+    saveEditorContent,
+    saveQueryResponses,
   };
 }
