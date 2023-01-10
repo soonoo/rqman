@@ -48,7 +48,7 @@ const ClusterStatusPage = () => {
           })}
         </Stack>
       </FormGroup>
-      <Stack direction="row" height="calc(100% - 48px)">
+      <Stack direction="row" height="100%">
         {keys.map((key, index) => {
           if (!tabVisibilities[key]) {
             return null;

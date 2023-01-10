@@ -18,7 +18,7 @@ const AccountFormModal = (props: IAccountFormModalProps) => {
   return (
     <Dialog onClose={onClose} open={open}>
       <Stack sx={{ padding: "10px" }}>
-        <DialogTitle>Enter an rqlite account</DialogTitle>
+        <DialogTitle>Enter a <a href="https://rqlite.io/docs/guides/security/#basic-auth" target="_blank">rqlite account</a></DialogTitle>
         <TextField
           value={form.username}
           onChange={(e) => setForm({ ...form, username: e.target.value })}
