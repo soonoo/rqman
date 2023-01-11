@@ -2,7 +2,7 @@
 rqman is a simple web UI for [rqlite](https://github.com/rqlite/rqlite). You can execute SQL queries and check status of rqlite cluster via rqman.  
 
 ## Demo
-[https://rqlite.soonoo.me](https://rqlite.soonoo.me)
+[https://rqman.soonoo.me](https://rqman.soonoo.me)
 
 ## Installation
 ### 1. With Docker
