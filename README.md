@@ -3,6 +3,7 @@ rqman is a simple web UI for [rqlite](https://github.com/rqlite/rqlite). You can
 
 ## Demo
 [https://rqman.soonoo.me](https://rqman.soonoo.me)
+(username/password: admin/admin)
 
 ## Installation
 ### 1. With Docker
