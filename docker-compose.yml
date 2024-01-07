@@ -1,6 +1,8 @@
 services:
   rqlite:
     image: rqlite/rqlite
+    ports:
+      - 4001:4001
   rqman:
     image: rqman
     environment:

@@ -7,7 +7,8 @@ rqman is a simple web UI for [rqlite](https://github.com/rqlite/rqlite). You can
 
 ## Installation
 ### 1. With Docker
-rqman should be up and running on port 80 with following `docker run` command.
+rqman should be up and running on port 80 with following `docker run` command. Note that localhost:4001 must be accessible from the rqman container.   
+Also, you can also use [docker-compose.yml](./docker-compose.yml) that runs rqlite and rqman together.   
 ```
 docker run -p 80:3000 \
   -e RQMAN_USERNAME=user \
